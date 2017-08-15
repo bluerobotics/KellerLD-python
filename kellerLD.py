@@ -22,12 +22,15 @@ class KellerLD(object):
 
 		# Read out minimum pressure reading
 		self._bus.write_byte(self._SLAVE_ADDRESS, 0x13)
+		time.sleep(0.001)
 		data = self._bus.read_i2c_block_data(self._SLAVE_ADDRESS, 0, 3)
 		
 		MSWord = data[1] << 8 | data[2]
 		self.debug(("0x13:", MSWord, data))
 
+		time.sleep(0.001)
 		self._bus.write_byte(self._SLAVE_ADDRESS, 0x14)
+		time.sleep(0.001)
 		data = self._bus.read_i2c_block_data(self._SLAVE_ADDRESS, 0, 3)
 
 		LSWord = data[1] << 8 | data[2]
@@ -37,13 +40,17 @@ class KellerLD(object):
 		self.debug(("pMin", self.pMin))
 
 		# Read out maximum pressure reading
+		time.sleep(0.001)
 		self._bus.write_byte(self._SLAVE_ADDRESS, 0x15)
+		time.sleep(0.001)
 		data = self._bus.read_i2c_block_data(self._SLAVE_ADDRESS, 0, 3)
 		
 		MSWord = data[1] << 8 | data[2]
 		self.debug(("0x15:", MSWord, data))
 
+		time.sleep(0.001)
 		self._bus.write_byte(self._SLAVE_ADDRESS, 0x16)
+		time.sleep(0.001)
 		data = self._bus.read_i2c_block_data(self._SLAVE_ADDRESS, 0, 3)
 
 		LSWord = data[1] << 8 | data[2]
@@ -121,6 +128,7 @@ if __name__ == '__main__':
 		try:
 			sensor.read()
 			print("pressure: %7.4f bar\ttemperature: %0.2f C") % (sensor.pressure(), sensor.temperature())
+			time.sleep(0.001)
 		except Exception as e:
 			print e
 
