@@ -1,6 +1,7 @@
 import time
 import smbus
 import struct
+import os
 
 class KellerLD(object):
 
@@ -14,6 +15,8 @@ class KellerLD(object):
 		except:
 			print("Bus %d is not available.") % bus
 			print("Available busses are listed as /dev/i2c*")
+			if os.uname()[1] == 'raspberrypi':
+				print("Enable the i2c interface using raspi-config!")
 
 	def init(self):
 		if self._bus is None:
