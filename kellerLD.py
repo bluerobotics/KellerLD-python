@@ -6,6 +6,7 @@ class KellerLD(object):
 
 	_SLAVE_ADDRESS = 0x40
 	_REQUEST_MEASUREMENT = 0xAC
+	_DEBUG = False
 
 	def __init__(self, bus=1):
 		try:
@@ -24,26 +25,32 @@ class KellerLD(object):
 		data = self._bus.read_i2c_block_data(self._SLAVE_ADDRESS, 0, 3)
 		
 		MSWord = data[1] << 8 | data[2]
+		self.debug(("0x13:", MSWord, data))
 
 		self._bus.write_byte(self._SLAVE_ADDRESS, 0x14)
 		data = self._bus.read_i2c_block_data(self._SLAVE_ADDRESS, 0, 3)
 
 		LSWord = data[1] << 8 | data[2]
+		self.debug(("0x14:", LSWord, data))
 
 		self.pMin = MSWord << 16 | LSWord
+		self.debug(("pMin", self.pMin))
 
 		# Read out maximum pressure reading
 		self._bus.write_byte(self._SLAVE_ADDRESS, 0x15)
 		data = self._bus.read_i2c_block_data(self._SLAVE_ADDRESS, 0, 3)
 		
 		MSWord = data[1] << 8 | data[2]
+		self.debug(("0x15:", MSWord, data))
 
 		self._bus.write_byte(self._SLAVE_ADDRESS, 0x16)
 		data = self._bus.read_i2c_block_data(self._SLAVE_ADDRESS, 0, 3)
 
 		LSWord = data[1] << 8 | data[2]
+		self.debug(("0x16:", LSWord, data))
 
 		self.pMax = MSWord << 16 | LSWord
+		self.debug(("pMax", self.pMax))
 		
 		# 'I' for 32bit unsigned int
 		self.pMin = struct.unpack('f', struct.pack('I', self.pMin))[0]
@@ -100,6 +107,10 @@ class KellerLD(object):
 			print "Call read() first to get a measurement"
 			return
 		return self._pressure
+
+	def debug(self, msg):
+		if self._DEBUG:
+			print(msg)
 
 if __name__ == '__main__':
 
