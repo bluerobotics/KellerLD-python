@@ -10,6 +10,8 @@ class KellerLD(object):
 	_DEBUG = False
 
 	def __init__(self, bus=1):
+		self._bus = None
+
 		try:
 			self._bus = smbus.SMBus(bus)
 		except:
