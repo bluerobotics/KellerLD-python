@@ -2,7 +2,10 @@ from kellerLD import KellerLD
 import time
 
 sensor = KellerLD()
-sensor.init()
+
+if not sensor.init():
+	print "Failed to initialize Keller LD sensor!"
+	exit(1)
 
 print "Testing Keller LD series pressure sensor"
 print "Press Ctrl + C to quit"

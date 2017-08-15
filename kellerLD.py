@@ -68,6 +68,8 @@ class KellerLD(object):
 		self.pMin = struct.unpack('f', struct.pack('I', self.pMin))[0]
 		self.pMax = struct.unpack('f', struct.pack('I', self.pMax))[0]
 
+		return True
+
 	def read(self):
 		if self._bus is None:
 			print "No bus!"
@@ -127,7 +129,9 @@ class KellerLD(object):
 if __name__ == '__main__':
 
 	sensor = KellerLD()
-	sensor.init()
+	if not sensor.init():
+		print "Failed to initialize Keller LD sensor!"
+		exit(1)
 
 	while True:
 		try:
