@@ -67,6 +67,7 @@ class KellerLD(object):
 		# 'I' for 32bit unsigned int
 		self.pMin = struct.unpack('f', struct.pack('I', self.pMin))[0]
 		self.pMax = struct.unpack('f', struct.pack('I', self.pMax))[0]
+		self.debug(("pMin:", self.pMin, "pMax:", self.pMax))
 
 		return True
 
@@ -109,6 +110,10 @@ class KellerLD(object):
 
 		self._pressure = (pressureRaw - 16384) * (self.pMax - self.pMin) / 32768 + self.pMin
 		self._temperature = ((temperatureRaw >> 4) - 24) * 0.05 - 50
+
+		self.debug(("data:", data))
+		self.debug(("pressureRaw:", pressureRaw, "pressure:", self._pressure))
+		self.debug(("temperatureRaw", temperatureRaw, "temperature:", self._temperature))
 
 	def temperature(self):
 		if self._temperature is None:
