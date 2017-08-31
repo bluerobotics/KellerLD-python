@@ -102,11 +102,11 @@ class KellerLD(object):
 
 		if statusByte & 0b11 << 3 :
 			print("Invalid mode: %d, expected 0!") % ((statusByte & 0b11 << 3) >> 3)
-			exit(1)
+			return False
 
 		if statusByte & 1 << 2 :
 			print("Memory checksum error!")
-			exit(1)
+			return False
 
 		self._pressure = (pressureRaw - 16384) * (self.pMax - self.pMin) / 32768 + self.pMin
 		self._temperature = ((temperatureRaw >> 4) - 24) * 0.05 - 50
@@ -114,6 +114,9 @@ class KellerLD(object):
 		self.debug(("data:", data))
 		self.debug(("pressureRaw:", pressureRaw, "pressure:", self._pressure))
 		self.debug(("temperatureRaw", temperatureRaw, "temperature:", self._temperature))
+
+		return True
+
 
 	def temperature(self):
 		if self._temperature is None:
@@ -145,4 +148,3 @@ if __name__ == '__main__':
 			time.sleep(0.001)
 		except Exception as e:
 			print e
-
