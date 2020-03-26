@@ -22,7 +22,7 @@ class KellerLD(object):
 
 	def init(self):
 		if self._bus is None:
-			print "No bus!"
+			print("No bus!")
 			return False
 
 		# Read out minimum pressure reading
@@ -73,12 +73,12 @@ class KellerLD(object):
 
 	def read(self):
 		if self._bus is None:
-			print "No bus!"
+			print("No bus!")
 			return False
 		
 		if self.pMin is None or self.pMax is None:
-			print "Init required!"
-			print "Call init() at least one time before attempting to read()"
+			print("Init required!")
+			print("Call init() at least one time before attempting to read()")
 			return False
 
 		self._bus.write_byte(self._SLAVE_ADDRESS, self._REQUEST_MEASUREMENT)
@@ -120,13 +120,13 @@ class KellerLD(object):
 
 	def temperature(self):
 		if self._temperature is None:
-			print "Call read() first to get a measurement"
+			print("Call read() first to get a measurement")
 			return
 		return self._temperature
 
 	def pressure(self):
 		if self._pressure is None:
-			print "Call read() first to get a measurement"
+			print("Call read() first to get a measurement")
 			return
 		return self._pressure
 
@@ -138,7 +138,7 @@ if __name__ == '__main__':
 
 	sensor = KellerLD()
 	if not sensor.init():
-		print "Failed to initialize Keller LD sensor!"
+		print("Failed to initialize Keller LD sensor!")
 		exit(1)
 
 	while True:
@@ -147,4 +147,4 @@ if __name__ == '__main__':
 			print("pressure: %7.4f bar\ttemperature: %0.2f C") % (sensor.pressure(), sensor.temperature())
 			time.sleep(0.001)
 		except Exception as e:
-			print e
+			print(e)
