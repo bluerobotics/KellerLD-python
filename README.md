@@ -4,7 +4,7 @@ A python module to interface with the LD line of pressure sensors from Keller. T
 
 The python SMBus library must be installed.
 
-	sudo apt-get install python-smbus
+	`pip install --user --upgrade smbus`
 
 # Usage
 
