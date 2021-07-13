@@ -52,7 +52,7 @@ class KellerLD(object):
 		
 		self.year = scaling0 >> 11
 		self.month = (scaling0 & 0b0000011110000000) >> 7
-		self.day = (scaling0) & 0b0000000001111100) >> 2
+		self.day = (scaling0 & 0b0000000001111100) >> 2
 		self.debug(("calibration date", self.year, self.month, self.day))
 		
 		# Read out minimum pressure reading
@@ -166,11 +166,11 @@ class KellerLD(object):
 			print(msg)
 	
 	def __str__(self):
-		return ("Keller LD I2C Pressure/Temperature Transmitter\n"
-			"\ttype: {}\n".format(self.pMode)
-			"\tcalibration date: {}-{}-{}\n".format(self.year, self.month, self.day)
-			"\tpressure offset: {:.5f} bar\n".format(self.pModeOffset)
-			"\tminimum pressure: {:.5f} bar\n".format(self.pMin)
+		return ("Keller LD I2C Pressure/Temperature Transmitter\n" +
+			"\ttype: {}\n".format(self.pMode) +
+			"\tcalibration date: {}-{}-{}\n".format(self.year, self.month, self.day) +
+			"\tpressure offset: {:.5f} bar\n".format(self.pModeOffset) +
+			"\tminimum pressure: {:.5f} bar\n".format(self.pMin) +
 			"\tmaximum pressure: {:.5f} bar".format(self.pMax))
 
 
