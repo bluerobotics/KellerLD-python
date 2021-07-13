@@ -8,6 +8,12 @@ class KellerLD(object):
 	_SLAVE_ADDRESS = 0x40
 	_REQUEST_MEASUREMENT = 0xAC
 	_DEBUG = False
+	_P_MODES = (
+		"PA Mode, Vented Gauge",   # Zero at atmospheric pressure
+		"PR Mode, Sealed Gauge",   # Zero at 1.0 bar
+		"PAA Mode, Absolute Gauge" # Zero at vacuum
+	)
+	_P_MODE_OFFSETS = (1.01325, 1.0, 0.0)
 
 	def __init__(self, bus=1):
 		self._bus = None
@@ -24,8 +30,33 @@ class KellerLD(object):
 		if self._bus is None:
 			print("No bus!")
 			return False
-
+		
+		# Read out pressure-mode to determine relevant offset 
+		self._bus.write_byte(self._SLAVE_ADDRESS, 0x12)
+		time.sleep(0.001)
+		# read three bytes (status, P MSB, P LSB)
+		# status byte should be 0b01BMoEXX, where
+		#   B=(0: conversion complete, 1:busy),
+		#   Mo=(00:normal mode, 01:command mode, 1X: reserved)
+		#   E=(0:checksum okay, 1:memory error)
+		#   X=(don't care)
+		data = self._bus.read_i2c_block_data(self._SLAVE_ADDRESS, 0, 3)
+		
+		scaling0 = data[1] << 8 | data[2]
+		self.debug(("0x12:", scaling0, data))
+		
+		pModeID = scaling0 & 0b11
+		self.pMode = self._P_MODES[pModeID]
+		self.pModeOffset = self._P_MODE_OFFSETS[pModeID]
+		self.debug(("pMode", self.pMode, "pressure offset [bar]", self.pModeOffset))
+		
+		self.year = scaling0 >> 11
+		self.month = (scaling0 & 0b0000011110000000) >> 7
+		self.day = (scaling0) & 0b0000000001111100) >> 2
+		self.debug(("calibration date", self.year, self.month, self.day))
+		
 		# Read out minimum pressure reading
+		time.sleep(0.001)
 		self._bus.write_byte(self._SLAVE_ADDRESS, 0x13)
 		time.sleep(0.001)
 		data = self._bus.read_i2c_block_data(self._SLAVE_ADDRESS, 0, 3)
@@ -108,7 +139,7 @@ class KellerLD(object):
 			print("Memory checksum error!")
 			return False
 
-		self._pressure = (pressureRaw - 16384) * (self.pMax - self.pMin) / 32768 + self.pMin
+		self._pressure = (pressureRaw - 16384) * (self.pMax - self.pMin) / 32768 + self.pMin + self.pModeOffset
 		self._temperature = ((temperatureRaw >> 4) - 24) * 0.05 - 50
 
 		self.debug(("data:", data))
@@ -133,6 +164,15 @@ class KellerLD(object):
 	def debug(self, msg):
 		if self._DEBUG:
 			print(msg)
+	
+	def __str__(self):
+		return ("Keller LD I2C Pressure/Temperature Transmitter\n"
+			"\ttype: {}\n".format(self.pMode)
+			"\tcalibration date: {}-{}-{}\n".format(self.year, self.month, self.day)
+			"\tpressure offset: {:.5f} bar\n".format(self.pModeOffset)
+			"\tminimum pressure: {:.5f} bar\n".format(self.pMin)
+			"\tmaximum pressure: {:.5f} bar".format(self.pMax))
+
 
 if __name__ == '__main__':
 
@@ -140,6 +180,7 @@ if __name__ == '__main__':
 	if not sensor.init():
 		print("Failed to initialize Keller LD sensor!")
 		exit(1)
+	print(sensor)
 
 	while True:
 		try:
