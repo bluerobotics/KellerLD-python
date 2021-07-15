@@ -86,14 +86,10 @@ class LLogReader():
         df = self.dataByName(name)
         meta = self.metaByName(name)
         if len(args):
-            print(df)
-            # p = df.plot.scatter(x='time', y=args[0], color=color1)
-            p = df.plot(kind='scatter', x='time', y=args[0], color=colors[0], marker=markers[0])
-            # label = meta['columns']
-            # print(label)
-            # label = f'{label[0]} ({label[1]})'
+            # this doesn't work for some reason, so the time needs to stay in it's own column
+            # p = df.plot.scatter(x=df.index.to_list(), y=args[0], color=colors[0], marker=markers[0])
+            p = df.plot.scatter(x='time', y=args[0], color=colors[0], marker=markers[0])
 
-            # p.ylabel(meta['columns'][args[0]])
             n=1
             if len(args) > 1:
                 for arg in args[1:]:
