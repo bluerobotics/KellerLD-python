@@ -17,15 +17,18 @@ args = parser.parse_args()
 LLOG_ERROR = 0
 # read only memory + factory calibration and serialization type information
 LLOG_ROM = 1
+# application-specific configuration information
 LLOG_CONFIG = 2
+# measurement data
 LLOG_DATA = 4
+# calibration data
 LLOG_CALIBRATION = 5
 
 categories = {
     LLOG_ERROR: {
         'name': 'error',
         'columns': [
-            ('error code', '-')
+            ['error code', '-']
         ]
     },
     LLOG_ROM: {

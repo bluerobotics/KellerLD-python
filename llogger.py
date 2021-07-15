@@ -25,10 +25,16 @@ class LLogReader():
             print('available types:', self.metaNames())
 
             sio = StringIO(self.data)
-            self.df = pd.read_csv(sio, sep=' ', header=None, index_col=0)
+            # self.df = pd.read_csv(sio, sep=' ', header=None, index_col=0)
+            self.df = pd.read_csv(sio, sep=' ', header=None)
+
             self.df.rename(columns={0: 'time', 1: 'logtype'}, inplace=True)
+
             # self.df.index = pd.DatetimeIndex(self.df.index)
-            self.df.index = pd.to_datetime(self.df.index, unit='s')
+
+
+            # self.df.index = pd.to_datetime(self.df.index, unit='s')
+            # self.df.index.name = 'time'
 
     def metaKeys(self):
         return self.metadata.keys()
@@ -61,23 +67,41 @@ class LLogReader():
 
         return self.dataByKey(self.metaName2Key(name))
 
-    def plot(self, name, *args):
-        plt.close('all')
+    def scatter(self, name, *args):
+
+        colors = [
+            "#FFA630",
+            "#4DA1A9",
+            "#611C35",
+            "#2E5077",
+            "#D7E8BA",
+            ]
+        markers = [
+            '+',
+            'x',
+            'o',
+            '-',
+            '.',
+        ]
         df = self.dataByName(name)
-        p = df.plot(y=args[0])
-        if len(args) > 1:
-            for arg in args[1:]:
-                axn = p.twinx()
-                df.plot(y=arg, ax=axn)
-                print(arg)
-        # print(df)
-        # df.plot()
+        meta = self.metaByName(name)
+        if len(args):
+            print(df)
+            # p = df.plot.scatter(x='time', y=args[0], color=color1)
+            p = df.plot(kind='scatter', x='time', y=args[0], color=colors[0], marker=markers[0])
+            # label = meta['columns']
+            # print(label)
+            # label = f'{label[0]} ({label[1]})'
 
-        plt.show()
-
-
-
-
+            # p.ylabel(meta['columns'][args[0]])
+            n=1
+            if len(args) > 1:
+                for arg in args[1:]:
+                    axn = p.twinx()
+                    df.plot.scatter(x='time', y=arg, ax=axn, color=colors[n], marker=markers[n])
+                    n += 1
+        else:
+            df.plot()
 
 
 
@@ -113,5 +137,6 @@ class LLogger():
         if self.logfile:
             self.logfile.close()
 
-reader = LLogReader('/home/jacob/asdf')
-reader.plot('measurement', ['temperature'], ['temperature', 'pressure'])
+
+# reader = LLogReader('/home/jacob/asdf')
+# reader.plot('measurement', ['temperature'], ['temperature', 'pressure'])
