@@ -85,17 +85,24 @@ class LLogReader():
         ]
         df = self.dataByName(name)
         meta = self.metaByName(name)
+
+
         if len(args):
             # this doesn't work for some reason, so the time needs to stay in it's own column
             # p = df.plot.scatter(x=df.index.to_list(), y=args[0], color=colors[0], marker=markers[0])
-            p = df.plot.scatter(x='time', y=args[0], color=colors[0], marker=markers[0])
+
+            arg = args[0]
+            for data in arg:
+                p = df.plot.scatter(x='time', y=data, color=colors[0], marker=markers[0])
+            # p = df.plot.scatter(x='time', y=args[0], color=colors[0], marker=markers[0])
 
             n=1
             if len(args) > 1:
                 for arg in args[1:]:
                     axn = p.twinx()
-                    df.plot.scatter(x='time', y=arg, ax=axn, color=colors[n], marker=markers[n])
-                    n += 1
+                    for data in arg:
+                        df.plot.scatter(x='time', y=data, ax=axn, color=colors[n], marker=markers[n])
+                        n += 1
         else:
             df.plot()
 
@@ -109,7 +116,7 @@ class LLogger():
 
         if self.logfile:
             self.logfile = open(self.logfile, 'w')
-            self.logfile.write(json.dumps(categories, indent=2, sort_keys=True) + '\n')
+            self.logfile.write(json.dumps(categories, indent=2, sort_keys=True, default=lambda o: '') + '\n')
     
     def log(self, type, data):
         t = time.time()
@@ -119,8 +126,8 @@ class LLogger():
             raise e
 
         try:
-            data = category.format(data)
-        except AttributeError:
+            data = category['format'](data)
+        except KeyError:
             pass
 
         logstring = f'{t:.6f} {type} {data}\n'
