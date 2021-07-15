@@ -45,9 +45,9 @@ class KellerLD(object):
 		scaling0 = data[1] << 8 | data[2]
 		self.debug(("0x12:", scaling0, data))
 		
-		pModeID = scaling0 & 0b11
-		self.pMode = self._P_MODES[pModeID]
-		self.pModeOffset = self._P_MODE_OFFSETS[pModeID]
+		self.pModeID = scaling0 & 0b11
+		self.pMode = self._P_MODES[self.pModeID]
+		self.pModeOffset = self._P_MODE_OFFSETS[self.pModeID]
 		self.debug(("pMode", self.pMode, "pressure offset [bar]", self.pModeOffset))
 		
 		self.year = scaling0 >> 11
