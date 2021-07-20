@@ -2,57 +2,24 @@
 
 import argparse
 from kellerLD import KellerLD
-from llogger import LLogger
+from llog import *
+import os
 import signal
 import subprocess
 import time
+
+dir_path = os.path.dirname(os.path.realpath(__file__))
+defaultMeta = dir_path+'/kellerld.meta'
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--bus', action='store', type=int, required=True)
 parser.add_argument('--frequency', action='store', type=int,
                     default=5, help="set the measurement frequency")
 parser.add_argument('--output', action='store', type=str, default=None)
+parser.add_argument('--meta', action='store', type=str, default=defaultMeta)
 args = parser.parse_args()
 
-LLOG_ERROR = 0
-# read only memory + factory calibration and serialization type information
-LLOG_ROM = 1
-# application-specific configuration information
-LLOG_CONFIG = 2
-# measurement data
-LLOG_DATA = 4
-# calibration data
-LLOG_CALIBRATION = 5
-
-categories = {
-    LLOG_ERROR: {
-        'name': 'error',
-        'columns': [
-            ['error code', '-']
-        ]
-    },
-    LLOG_ROM: {
-        'name': 'rom',
-        'columns': [
-            ['month', '-'],
-            ['day', '-'],
-            ['year', '-'],
-            ['pmin', 'bar'],
-            ['pmax', 'bar'],
-            ['pmode', '[PA,PR,PAA]']
-        ]
-    },
-    LLOG_DATA: {
-        'name': 'measurement',
-        'columns': [
-            ['pressure', 'mbar'],
-            ['temperature', 'C'],
-        ],
-    },
-}
-
-
-log = LLogger(categories, console=True, logfile=args.output)
+log = LLogWriter(args.meta, args.output)
 
 def cleanup(_signo, _stack):
     log.close()
