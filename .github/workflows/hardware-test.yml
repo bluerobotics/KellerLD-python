@@ -1,0 +1,19 @@
+name: Linux hardware test
+
+on: [push, pull_request]
+
+jobs:
+  build:
+
+    runs-on: self-hosted
+
+    steps:
+    - uses: actions/checkout@master
+    - name: Install necessary tools
+      run: |
+        curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+        sudo apt -y update
+        sudo apt -y install i2c-tools python3-smbus
+    - name: Build it
+      run: |
+        python3 test.py
