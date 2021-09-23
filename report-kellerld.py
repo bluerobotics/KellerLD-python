@@ -1,67 +1,37 @@
 #!/usr/bin/python3
 
-import argparse
-from fpdf import FPDF
-from llog import LLogReader
 import matplotlib.pyplot as plt
-import os
 
-dir_path = os.path.dirname(os.path.realpath(__file__))
-defaultMeta = dir_path+'/kellerld.meta'
+DEVICE = 'kellerld'
 
-parser = argparse.ArgumentParser(description='kellerld test report')
-parser.add_argument('--input', action='store', type=str, required=True)
-parser.add_argument('--output-dir', action='store', type=str, required=True)
-parser.add_argument('--meta', action='store', type=str, default=defaultMeta)
-args = parser.parse_args()
+def generate_figures(log):
+    footer = f'{DEVICE} test report'
+    
+    f, spec = log.figure(height_ratios=[1,1], suptitle=f'{DEVICE} data', footer=footer)
+    plt.subplot(spec[0,0])
+    log.rom.T.ttable(rl=True)
+    plt.subplot(spec[0,1])
+    log.config.T.ttable(rl=True)
+    
+    plt.subplot(spec[1,:])
+    log.data.pressure.pplot(log.data.temperature)
 
-log = LLogReader(args.input, args.meta)
+if __name__ == '__main__:
+    from llog import LLogReader
+    from matplotlib.backends.backend_pdf import PdfPages
+    
+    parser = LLogReader.create_default_parser(__file__, DEVICE)
+    args = parser.parse_args()
 
-p = log.data.pressure
-t = log.data.temperature
-
-p.ll.pplot(t)
-plt.title('KellerLD Pressure + Temperature')
-
-plt.figure()
-log.data.ll.plot(['temperature', 'pressure'], ['temperature'])
-
-plt.show()
-
-
-pdf = FPDF()
-pdf.add_page()
-pdf.set_font('Courier')
-
-def table(df):
-    widths = {}
-    for c in df:
-        widths[c] = pdf.get_string_width(c)
-        for r in df[c]:
-            d = str(r)
-            width = pdf.get_string_width(d)
-            if width > widths[c]:
-                widths[c] = width
-        pdf.cell(widths[c]+2, 4, c, border=1)
-    pdf.ln(4)
-    for r in df.index:
-        for c in df:
-            pdf.cell(widths[c]+2, 4, str(df[c][r]), border=1)
-
-
-table(log.rom)
-pdf.output('test.pdf')
-
-# def table_helper(pdf, epw, th, table_data, col_num):
-#     for row in table_data:
-#         maxwidth=0
-#         for datum in row:
-#             d = str(datum)
-#             w = pdf.get_string_width(d)
-#             if w > maxwidth:
-#                 maxwidth = w
-#         for datum in row:
-#             # Enter data in columns
-#             d = str(datum)
-#             pdf.cell(maxwidth + 2, 2 * th, d, border=1)
-#         pdf.ln(2 * th)
+    log = LLogReader(args.input, args.meta)
+    
+    generate_figures(log)
+    
+    if args.output:
+        # todo check if it exists!
+        with PdfPages(args.output) as pdf:
+            for n in plt.get_fignums():
+                pdf.savefig(n)
+    
+    if args.show:
+        plt.show()
