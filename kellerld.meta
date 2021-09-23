@@ -1,55 +1,52 @@
 {
   "0": {
-    "type": "error",
+    "llType": "error",
     "columns": [
       {
-        "name": "error code",
+        "llabel": "error code",
         "color": "red",
         "marker": "o",
         "dtype": "int"
       },
       {
-        "name": "error message",
+        "llabel": "error message",
         "dtype": "str"
       }
     ]
   },
   "1": {
-    "type": "rom",
+    "llType": "data",
     "columns": [
-        {
-            "name": "month",
-            "dtype": "int"
-        },
-        {
-            "name": "day",
-            "dtype": "int"
-        },
-        {
-            "name": "year",
-            "dtype": "int"
-        },
-        {
-            "name": "pMin",
-            "units": "bar",
-            "dtype": "float"
-        },
-        {
-            "name": "pMax",
-            "units": "bar",
-            "dtype": "float"
-        },
-        {
-            "name": "pModeID",
-            "dtype": "int"
-        }
+      {
+        "llabel": "pressure",
+        "units": "mbar",
+        "dtype": "float",
+        "color": "red",
+        "marker": "o"
+      },
+      {
+        "llabel": "temperature",
+        "units": "C",
+        "dtype": "float",
+        "color": "green",
+        "marker": "x",
+        "scalar": 2.0
+      },
+      {
+        "llabel": "pressure_raw",
+        "dtype": "int"
+      },
+      {
+        "llabel": "temperature_raw",
+        "dtype": "int"
+      }
     ]
   },
   "2": {
-    "type": "configuration",
+    "llType": "config",
     "columns": [
       {
-        "name": "ctrl register",
+        "llabel": "ctrl register",
         "units": "bitmap",
         "bits": {
           "0": {
@@ -64,7 +61,7 @@
         "marker": "o"
       },
       {
-        "name": "cfg register",
+        "llabel": "cfg register",
         "units": "bitmap",
         "bits": {
           "0": {
@@ -80,35 +77,35 @@
       }
     ]
   },
-  "3": {
-    "type": "calibration"
-  },
-  "4": {
-    "type": "data",
+  "5": {
+    "llType": "rom",
     "columns": [
-      {
-        "name": "pressure",
-        "units": "mbar",
-        "dtype": "float",
-        "color": "red",
-        "marker": "o"
-      },
-      {
-        "name": "temperature",
-        "units": "C",
-        "dtype": "float",
-        "color": "green",
-        "marker": "x",
-        "scalar": 2.0
-      },
-      {
-        "name": "pressure_raw",
-        "dtype": "int"
-      },
-      {
-        "name": "temperature_raw",
-        "dtype": "int"
-      }
+        {
+            "llabel": "month",
+            "dtype": "int"
+        },
+        {
+            "llabel": "day",
+            "dtype": "int"
+        },
+        {
+            "llabel": "year",
+            "dtype": "int"
+        },
+        {
+            "llabel": "pMin",
+            "units": "bar",
+            "dtype": "float"
+        },
+        {
+            "llabel": "pMax",
+            "units": "bar",
+            "dtype": "float"
+        },
+        {
+            "llabel": "pModeID",
+            "dtype": "int"
+        }
     ]
   }
 }
