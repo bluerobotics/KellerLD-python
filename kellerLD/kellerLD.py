@@ -21,7 +21,7 @@ class KellerLD(object):
 		try:
 			self._bus = smbus.SMBus(bus)
 		except:
-			print("Bus %d is not available.") % bus
+			print("Bus %d is not available." % bus)
 			print("Available busses are listed as /dev/i2c*")
 			if os.uname()[1] == 'raspberrypi':
 				print("Enable the i2c interface using raspi-config!")
