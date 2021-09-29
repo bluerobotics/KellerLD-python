@@ -7,7 +7,7 @@ device = "kellerLD"
 parser = LLogWriter.create_default_parser(__file__, device)
 args = parser.parse_args()
 
-with LLogWriter(args.meta, args.output) as log:
+with LLogWriter(args.meta, args.output, console=args.console) as log:
     keller = KellerLD()
     if not keller.init():
         print("Failed to initialize Keller LD sensor!")
