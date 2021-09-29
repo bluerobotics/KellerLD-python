@@ -9,5 +9,6 @@ setup(
     author='Blue Robotics',
     url='https://github.com/bluerobotics/kellerLD-python',
     packages=['kellerLD'],
+    package_data={ "kellerLD": ["kellerLD.meta"]},
     install_requires=['smbus'],
 )
