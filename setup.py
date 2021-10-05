@@ -16,5 +16,5 @@ setup(
             'kellerld-test=kellerLD.test:main',
         ],
     },
-    install_requires=['smbus'],
+    install_requires=['smbus2'],
 )

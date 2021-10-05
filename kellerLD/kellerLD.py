@@ -1,5 +1,5 @@
 import time
-import smbus
+import smbus2
 import struct
 import os
 
@@ -17,7 +17,7 @@ class KellerLD(object):
 
 	def __init__(self, bus=6):
 		self._bus = None
-		self._bus = smbus.SMBus(bus)
+		self._bus = smbus2.SMBus(bus)
 
 	def init(self):
 		if self._bus is None:

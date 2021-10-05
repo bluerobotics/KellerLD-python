@@ -6,9 +6,9 @@ See the [Keller Communication Protocol 4LD-9LD](http://www.keller-druck2.ch/swup
 
 # Requirements
 
-The python SMBus library must be installed.
+The python smbus2 library must be installed.
 
-	sudo apt-get install python-smbus
+	pip install --user smbus2
 
 # Usage
 
