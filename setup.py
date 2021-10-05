@@ -12,6 +12,7 @@ setup(
     package_data={ "kellerLD": ["kellerLD.meta"]},
     entry_points={
         'console_scripts': [
+            'kellerld-report=kellerLD.report:main',
             'kellerld-test=kellerLD.test:main',
         ],
     },
