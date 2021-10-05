@@ -14,12 +14,14 @@
       {
         "llabel": "pressure",
         "units": "hPa",
-        "dtype": "float"
+        "dtype": "float",
+        "color": "chartreuse"
       },
       {
         "llabel": "temperature",
         "units": "degC",
-        "dtype": "float"
+        "dtype": "float",
+        "color": "indigo"
       }
     ]
   }
