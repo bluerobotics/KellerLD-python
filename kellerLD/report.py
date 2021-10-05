@@ -7,11 +7,11 @@ def generate_figures(log):
 
     f, spec = log.figure(height_ratios=[1,1], suptitle=f'kellerld data', footer=footer)
 
-    plt.subplot(spec[1,:])
+    plt.subplot(spec[0,:])
 
     # todo check if log.error exists
     try:
-        log.error.ttable(rl=True)
+        log.error.head(10).ttable(rl=True)
     except:
         pass
 
@@ -23,7 +23,7 @@ def main():
     from matplotlib.backends.backend_pdf import PdfPages
     from pathlib import Path
 
-    parser = LLogReader.create_default_parser(__file__, 'kellerld')
+    parser = LLogReader.create_default_parser(__file__, 'kellerLD')
     args = parser.parse_args()
 
     log = LLogReader(args.input, args.meta)
