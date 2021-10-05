@@ -17,14 +17,7 @@ class KellerLD(object):
 
 	def __init__(self, bus=6):
 		self._bus = None
-
-		try:
-			self._bus = smbus.SMBus(bus)
-		except:
-			print("Bus %d is not available." % bus)
-			print("Available busses are listed as /dev/i2c*")
-			if os.uname()[1] == 'raspberrypi':
-				print("Enable the i2c interface using raspi-config!")
+		self._bus = smbus.SMBus(bus)
 
 	def init(self):
 		if self._bus is None:
@@ -103,10 +96,6 @@ class KellerLD(object):
 		return True
 
 	def read(self):
-		if self._bus is None:
-			print("No bus!")
-			return False
-		
 		if self.pMin is None or self.pMax is None:
 			print("Init required!")
 			print("Call init() at least one time before attempting to read()")
