@@ -8,15 +8,14 @@ def generate_figures(log):
     f, spec = log.figure(height_ratios=[1,1], suptitle=f'kellerld data', footer=footer)
 
     plt.subplot(spec[0,:])
+    log.data.pressure.pplot(log.data.temperature)
 
+    plt.subplot(spec[1,:])
     # todo check if log.error exists
     try:
         log.error.head(10).ttable(rl=True)
     except:
         pass
-
-    plt.subplot(spec[1,:])
-    log.data.pressure.pplot(log.data.temperature)
 
 def main():
     from llog import LLogReader
