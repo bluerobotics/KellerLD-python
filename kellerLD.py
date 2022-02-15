@@ -14,9 +14,15 @@ class KellerLD(object):
 		"PAA Mode, Absolute Gauge" # Zero at vacuum
 	)
 	_P_MODE_OFFSETS = (1.01325, 1.0, 0.0)
+	PRESSURE_CONVERSION = {
+		"Pa"	: 100000,
+		"mbar"	: 1000,
+		"bar" 	: 1,
+	}
 
 	def __init__(self, bus=1):
 		self._bus = None
+		self._fluid_density = 1029 # kg/m^3
 
 		try:
 			self._bus = smbus.SMBus(bus)
@@ -30,8 +36,8 @@ class KellerLD(object):
 		if self._bus is None:
 			print("No bus!")
 			return False
-		
-		# Read out pressure-mode to determine relevant offset 
+
+		# Read out pressure-mode to determine relevant offset
 		self._bus.write_byte(self._SLAVE_ADDRESS, 0x12)
 		time.sleep(0.001)
 		# read three bytes (status, P MSB, P LSB)
@@ -41,26 +47,26 @@ class KellerLD(object):
 		#   E=(0:checksum okay, 1:memory error)
 		#   X=(don't care)
 		data = self._bus.read_i2c_block_data(self._SLAVE_ADDRESS, 0, 3)
-		
+
 		scaling0 = data[1] << 8 | data[2]
 		self.debug(("0x12:", scaling0, data))
-		
+
 		pModeID = scaling0 & 0b11
 		self.pMode = self._P_MODES[pModeID]
 		self.pModeOffset = self._P_MODE_OFFSETS[pModeID]
 		self.debug(("pMode", self.pMode, "pressure offset [bar]", self.pModeOffset))
-		
+
 		self.year = scaling0 >> 11
 		self.month = (scaling0 & 0b0000011110000000) >> 7
 		self.day = (scaling0 & 0b0000000001111100) >> 2
 		self.debug(("calibration date", self.year, self.month, self.day))
-		
+
 		# Read out minimum pressure reading
 		time.sleep(0.001)
 		self._bus.write_byte(self._SLAVE_ADDRESS, 0x13)
 		time.sleep(0.001)
 		data = self._bus.read_i2c_block_data(self._SLAVE_ADDRESS, 0, 3)
-		
+
 		MSWord = data[1] << 8 | data[2]
 		self.debug(("0x13:", MSWord, data))
 
@@ -80,7 +86,7 @@ class KellerLD(object):
 		self._bus.write_byte(self._SLAVE_ADDRESS, 0x15)
 		time.sleep(0.001)
 		data = self._bus.read_i2c_block_data(self._SLAVE_ADDRESS, 0, 3)
-		
+
 		MSWord = data[1] << 8 | data[2]
 		self.debug(("0x15:", MSWord, data))
 
@@ -94,7 +100,7 @@ class KellerLD(object):
 
 		self.pMax = MSWord << 16 | LSWord
 		self.debug(("pMax", self.pMax))
-		
+
 		# 'I' for 32bit unsigned int
 		self.pMin = struct.unpack('f', struct.pack('I', self.pMin))[0]
 		self.pMax = struct.unpack('f', struct.pack('I', self.pMax))[0]
@@ -106,7 +112,7 @@ class KellerLD(object):
 		if self._bus is None:
 			print("No bus!")
 			return False
-		
+
 		if self.pMin is None or self.pMax is None:
 			print("Init required!")
 			print("Call init() at least one time before attempting to read()")
@@ -141,10 +147,23 @@ class KellerLD(object):
 
 		self._pressure = (pressureRaw - 16384) * (self.pMax - self.pMin) / 32768 + self.pMin + self.pModeOffset
 		self._temperature = ((temperatureRaw >> 4) - 24) * 0.05 - 50
+		self._depth = ((self._pressure * self.PRESSURE_CONVERSION["Pa"]) - 101325) / (self._fluid_density * 9.80665)
+		self._altitude = (1-((self._pressure * self.PRESSURE_CONVERSION["mbar"] / 1013.25)**0.190284)) * 145366.45 * .3048
 
 		self.debug(("data:", data))
 		self.debug(("pressureRaw:", pressureRaw, "pressure:", self._pressure))
 		self.debug(("temperatureRaw", temperatureRaw, "temperature:", self._temperature))
+		self.debug(("depth:", self._depth))
+		self.debug(("altitude:", self._altitude))
+
+		return True
+
+	def set_fluid_density(self, fluid_density):
+		'''
+		Provide the density of the working fluid in kg/m^3. Default is for
+		seawater. Should be 997 for freshwater.
+		'''
+		self._fluid_density = fluid_density
 
 		return True
 
@@ -155,16 +174,29 @@ class KellerLD(object):
 			return
 		return self._temperature
 
-	def pressure(self):
+	def pressure(self, conversion = "bar"):
+		assert self.PRESSURE_CONVERSION.get(conversion) is not None, "Invalid Pressure Unit: {}".format(conversion)
 		if self._pressure is None:
 			print("Call read() first to get a measurement")
 			return
-		return self._pressure
+		return self._pressure * self.PRESSURE_CONVERSION[conversion]
+
+	def depth(self):
+		if self._depth is None:
+			print("Call read() first to get a measurement")
+			return
+		return self._depth
+
+	def altitude(self):
+		if self._altitude is None:
+			print("Call read() first to get a measurement")
+			return
+		return self._altitude
 
 	def debug(self, msg):
 		if self._DEBUG:
 			print(msg)
-	
+
 	def __str__(self):
 		return ("Keller LD I2C Pressure/Temperature Transmitter\n" +
 			"\ttype: {}\n".format(self.pMode) +
