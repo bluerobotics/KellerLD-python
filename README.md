@@ -10,6 +10,12 @@ The python SMBus library must be installed.
 
 	sudo apt-get install python-smbus
 
+# Installation
+Run the following to install KellerLD-python
+
+	python3 setup.py install --user
+
+
 # Usage
 
     from kellerLD import KellerLD
