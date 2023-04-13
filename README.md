@@ -45,6 +45,12 @@ Get the most recent pressure measurement.
 
 Returns the most recent pressure in bar. Call read() to update.
 
+You can change the units of pressure by specifying a unit:
+
+	sensor.pressure('Pa')
+	sensor.pressure('bar')
+	sensor.pressure('mbar')
+
 ### temperature()
 
 Get the most recent temperature measurement.
@@ -52,3 +58,19 @@ Get the most recent temperature measurement.
 	sensor.temperature()
 
 Returns the most recent temperature in degrees Centigrade. Call read() to update.
+
+### depth()
+
+Get the most recent depth measurement.
+
+	sensor.depth()
+
+Returns the most recent depth in meters below sea level. Call read() to update.
+
+### altitude()
+
+Get the most recent altitude measurement.
+
+	sensor.altitude()
+
+Returns the most recent altitude in meters above sea level. Call read() to update.

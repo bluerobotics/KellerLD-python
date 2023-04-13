@@ -14,7 +14,7 @@ time.sleep(3)
 while True:
 	try:
 		sensor.read()
-		print("pressure: %7.4f bar\ttemperature: %0.2f C" % (sensor.pressure(), sensor.temperature()))
+		print("pressure: %7.4f bar\ttemperature: %0.2f C\tdepth: %4.2f m\taltitude %4.2f m" % (sensor.pressure(), sensor.temperature(), sensor.depth(), sensor.altitude()))
 		time.sleep(0.2)
-	except Exception as e:
-		print(e)
+	except KeyboardInterrupt:
+		break
