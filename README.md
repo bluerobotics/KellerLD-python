@@ -8,24 +8,35 @@ See the [Keller Communication Protocol 4LD-9LD](http://www.keller-druck2.ch/swup
 
 The python SMBus library must be installed.
 
+```sh
 	sudo apt-get install python-smbus
+```
 
 # Installation
 Run the following to install KellerLD-python
 
-	python3 setup.py install --user
+```sh
+	pip install git+https://github.com/bluerobotics/KellerLD-python.git@master
+```
 
+# Example
+
+Check the minimal example [available here](https://github.com/bluerobotics/KellerLD-python/blob/master/example.py).
 
 # Usage
 
+```py
     from kellerLD import KellerLD
     sensor = KellerLD()
+```
 
 ### init()
 
 Initialize the sensor. This needs to be called before using any other methods.
 
+```py
     sensor.init()
+```
 
 Returns true if the sensor was successfully initialized, false otherwise.
 
@@ -33,7 +44,9 @@ Returns true if the sensor was successfully initialized, false otherwise.
 
 Read the sensor and update the pressure and temperature.
 
+```py
     sensor.read()
+```
 
 Returns True if read was successful, False otherwise.
 
@@ -41,7 +54,9 @@ Returns True if read was successful, False otherwise.
 
 Get the most recent pressure measurement.
 
+```py
 	sensor.pressure()
+```
 
 Returns the most recent pressure in bar. Call read() to update.
 
@@ -49,6 +64,8 @@ Returns the most recent pressure in bar. Call read() to update.
 
 Get the most recent temperature measurement.
 
+```py
 	sensor.temperature()
+```
 
 Returns the most recent temperature in degrees Centigrade. Call read() to update.
