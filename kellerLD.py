@@ -47,8 +47,7 @@ class KellerLD(object):
 		
 		pModeID = scaling0 & 0b11
 		self.pMode = self._P_MODES[pModeID]
-		self.pModeOffset = self._P_MODE_OFFSETS[pModeID]
-		self.debug(("pMode", self.pMode, "pressure offset [bar]", self.pModeOffset))
+		self.set_reference_pressure(self._P_MODE_OFFSETS[pModeID])
 		
 		self.year = scaling0 >> 11
 		self.month = (scaling0 & 0b0000011110000000) >> 7
@@ -101,6 +100,17 @@ class KellerLD(object):
 		self.debug(("pMin:", self.pMin, "pMax:", self.pMax))
 
 		return True
+
+	def set_reference_pressure(self, pBar):
+		""" Set the reference pressure for the sensor.
+		
+		Vented Gauge sensors are relative to the pressure on the rear/inside of the sensor
+		element, so are more accurate if that reference value is kept updated from an aerial
+		pressure sensor (e.g. inside an enclosure, or to the local atmospheric pressure if
+		the sensor is installed in the wall of a water tank).
+		"""
+		self.pModeOffset = pBar
+		self.debug(("pMode", self.pMode, "pressure offset [bar]", self.pModeOffset))
 
 	def read(self):
 		if self._bus is None:

@@ -60,6 +60,15 @@ Get the most recent pressure measurement.
 
 Returns the most recent pressure in bar. Call read() to update.
 
+#### set_reference_pressure(pBar)
+
+Update the reference pressure value for PR Mode (Vented Gauge) sensors, in bar.
+
+```py
+    local_atmosphere = 1.01325  # ideally read regularly from an air pressure sensor
+    sensor.set_reference_pressure(local_atmosphere)
+```
+
 ### temperature()
 
 Get the most recent temperature measurement.
