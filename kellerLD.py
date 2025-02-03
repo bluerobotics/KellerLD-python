@@ -9,8 +9,8 @@ class KellerLD(object):
 	_REQUEST_MEASUREMENT = 0xAC
 	_DEBUG = False
 	_P_MODES = (
-		"PA Mode, Vented Gauge",   # Zero at atmospheric pressure
-		"PR Mode, Sealed Gauge",   # Zero at 1.0 bar
+		"PR Mode, Vented Gauge",   # Zero when front pressure == rear pressure
+		"PA Mode, Sealed Gauge",   # Zero at 1.0 bar
 		"PAA Mode, Absolute Gauge" # Zero at vacuum
 	)
 	_P_MODE_OFFSETS = (1.01325, 1.0, 0.0)
