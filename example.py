@@ -13,8 +13,8 @@ time.sleep(3)
 
 while True:
 	try:
-		sensor.read()
-		print("pressure: %7.4f bar\ttemperature: %0.2f C" % (sensor.pressure(), sensor.temperature()))
+		if sensor.read():
+			print(f"pressure: {sensor.pressure():7.4f} bar\ttemperature: {sensor.temperature():0.2f} C")
 		time.sleep(0.2)
 	except Exception as e:
 		print(e)

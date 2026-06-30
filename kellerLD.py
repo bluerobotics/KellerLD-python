@@ -141,6 +141,15 @@ class KellerLD(object):
 			return
 		'''
 
+		# Validate the vendor-reserved framing bits before trusting the data.
+		# A valid status byte is 0b01BMoEXX, so bit 7 must be 0 and bit 6 must
+		# be 1. Anything else means the sensor is not returning a normal
+		# measurement (e.g. 0x00 post-reset/not-ready, or 0xFF bus-stuck-high),
+		# and the accompanying pressure/temperature bytes must not be trusted.
+		if ((statusByte & 0b11 << 6) >> 6) != 0b01 :
+			print(f"Invalid status byte: 0x{statusByte:02X}")
+			return False
+
 		if statusByte & 0b11 << 3 :
 			print("Invalid mode: %d, expected 0!") % ((statusByte & 0b11 << 3) >> 3)
 			return False
@@ -194,8 +203,8 @@ if __name__ == '__main__':
 
 	while True:
 		try:
-			sensor.read()
-			print("pressure: %7.4f bar\ttemperature: %0.2f C") % (sensor.pressure(), sensor.temperature())
+			if sensor.read():
+				print(f"pressure: {sensor.pressure():7.4f} bar\ttemperature: {sensor.temperature():0.2f} C")
 			time.sleep(0.001)
 		except Exception as e:
 			print(e)
